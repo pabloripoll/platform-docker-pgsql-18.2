@@ -56,32 +56,32 @@ local-ownership-set: ## sets recursively local root directory ownership
 .PHONY: db-hostcheck db-info db-set db-create db-ssh db-start db-stop db-destroy
 
 db-hostcheck: ## shows this project ports availability on local machine for database container
-	cd platform/$(DATABASE_PLTF) && $(MAKE) port-check
+	cd platforms/$(DATABASE_PLTF) && $(MAKE) port-check
 
 db-info: ## shows docker related information
-	cd platform/$(DATABASE_PLTF) && $(MAKE) info
+	cd platforms/$(DATABASE_PLTF) && $(MAKE) info
 
 db-set: ## sets the database enviroment file to build the container
-	cd platform/$(DATABASE_PLTF) && $(MAKE) env-set
+	cd platforms/$(DATABASE_PLTF) && $(MAKE) env-set
 
 db-create: ## creates the database container from Docker image
-	cd platform/$(DATABASE_PLTF) && $(MAKE) build up
+	cd platforms/$(DATABASE_PLTF) && $(MAKE) build up
 
 db-network: ## creates the database container external network
 	$(MAKE) apirest-stop
-	cd platform/$(DATABASE_PLTF) && $(DOCKER_COMPOSE) -f docker-compose.yml -f docker-compose.network.yml up -d
+	cd platforms/$(DATABASE_PLTF) && $(DOCKER_COMPOSE) -f docker-compose.yml -f docker-compose.network.yml up -d
 
 db-ssh: ## enters the apirest container shell
-	cd platform/$(DATABASE_PLTF) && $(MAKE) ssh
+	cd platforms/$(DATABASE_PLTF) && $(MAKE) ssh
 
 db-start: ## starts the database container running
-	cd platform/$(DATABASE_PLTF) && $(MAKE) start
+	cd platforms/$(DATABASE_PLTF) && $(MAKE) start
 
 db-stop: ## stops the database container but its assets will not be destroyed
-	cd platform/$(DATABASE_PLTF) && $(MAKE) stop
+	cd platforms/$(DATABASE_PLTF) && $(MAKE) stop
 
 db-restart: ## restarts the running database container
-	cd platform/$(DATABASE_PLTF) && $(MAKE) restart
+	cd platforms/$(DATABASE_PLTF) && $(MAKE) restart
 
 db-destroy: ## destroys completly the database container with its data
 	echo ${C_RED}"Attention!"${C_END};
@@ -89,7 +89,7 @@ db-destroy: ## destroys completly the database container with its data
 	@echo -n ${C_RED}"Are you sure to proceed? "${C_END}"[y/n]: " && read response && if [ $${response:-'n'} != 'y' ]; then \
         echo ${C_GRN}"K.O.! container has been stopped but not destroyed."${C_END}; \
     else \
-		cd platform/$(DATABASE_PLTF) && $(MAKE) clear destroy; \
+		cd platforms/$(DATABASE_PLTF) && $(MAKE) clear destroy; \
 		echo -n ${C_GRN}"Do you want to clear DOCKER cache? "${C_END}"[y/n]: " && read response && if [ $${response:-'n'} != 'y' ]; then \
 			echo ${C_YEL}"The following commands are delegated to be executed by user:"${C_END}; \
 			echo "$$ $(DOCKER) system prune"; \
@@ -104,28 +104,28 @@ db-destroy: ## destroys completly the database container with its data
 .PHONY: db-test-up db-test-down
 
 db-test-up: ## creates a side database for testing porpuses
-	cd platform/$(DATABASE_PLTF) && $(MAKE) test-up
+	cd platforms/$(DATABASE_PLTF) && $(MAKE) test-up
 
 db-test-down: ## drops the side testing database
-	cd platform/$(DATABASE_PLTF) && $(MAKE) test-down
+	cd platforms/$(DATABASE_PLTF) && $(MAKE) test-down
 
 .PHONY: db-sql-install db-sql-replace db-sql-backup db-sql-remote db-copy-remote
 
 db-sql-install: ## migrates sql file with schema / data into the container main database to init a project
 	$(MAKE) local-ownership-set;
-	cd platform/$(DATABASE_PLTF) && $(MAKE) sql-install
+	cd platforms/$(DATABASE_PLTF) && $(MAKE) sql-install
 
 db-sql-replace: ## replaces the container main database with the latest database .sql backup file
 	$(MAKE) local-ownership-set;
-	cd platform/$(DATABASE_PLTF) && $(MAKE) sql-replace
+	cd platforms/$(DATABASE_PLTF) && $(MAKE) sql-replace
 
 db-sql-backup: ## copies the container main database as backup into a .sql file
 	$(MAKE) local-ownership-set;
-	cd platform/$(DATABASE_PLTF) && $(MAKE) sql-backup
+	cd platforms/$(DATABASE_PLTF) && $(MAKE) sql-backup
 
 db-sql-drop: ## drops the container main database but recreates the database without schema as a reset action
 	$(MAKE) local-ownership-set;
-	cd platform/$(DATABASE_PLTF) && $(MAKE) sql-drop
+	cd platforms/$(DATABASE_PLTF) && $(MAKE) sql-drop
 
 # -------------------------------------------------------------------------------------------------
 #  Repository Helper
